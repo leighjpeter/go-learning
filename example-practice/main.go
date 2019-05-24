@@ -195,7 +195,38 @@ func Round(f float64, n int) float64 {
 func main() {
 	f := Round(0.3452135, 2)
 	fmt.Println(f)
+
+	v := [...]int{1, 2, 3, 4, 5}
+	for i := range v {
+		v[2] = 100
+		if i == 2 {
+			fmt.Println(i, v[i]) //2,100
+		}
+	}
+	fmt.Println(v) // [1 2 100 4 5]
+	a := [...]int{1, 2, 3, 4, 5}
+	for i, v := range a {
+		a[2] = 100
+		if i == 2 {
+			fmt.Println(i, v) // 2, 3
+		}
+	}
+	fmt.Println(a) // [1 2 100 4 5 ]
+
+	n := [...]int{1, 2, 3, 4, 5}
+	for i, v := range &n {
+		n[2] = 100
+		if i == 2 {
+			fmt.Println(i, v) // 2 100
+		}
+	}
+	fmt.Println(n) // [1 2 100 4 5 ]
 	return
+
+	map_a := make(map[string]int)
+	mmmm, ok := map_a["aaa"]
+	fmt.Println(mmmm, ok)
+
 	// 排序
 	var arr = []int{6, 1, 2, 4, 9, 3, 7, 5, 10, 8, 0}
 	len2 := len(arr)
@@ -244,13 +275,13 @@ func main() {
 	}
 
 	//编写一个函数判断输入参数的类型
-	a := 1
-	b := 1.1
-	c := true
-	d := "a"
+	type_a := 1
+	type_b := 1.1
+	type_c := true
+	type_d := "a"
 	stu1 := Student{}
 	stu2 := &Student{}
-	TypeJudge(a, b, c, d, stu1, stu2)
+	TypeJudge(type_a, type_b, type_c, type_d, stu1, stu2)
 
 	//
 	type User struct {
