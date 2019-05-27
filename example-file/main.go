@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	// "io/ioutil"
+	"io/ioutil"
 	"os"
+	// "strconv"
+	// "strings"
 )
 
 func PathExists(path string) (bool, error) {
@@ -17,6 +19,21 @@ func PathExists(path string) (bool, error) {
 		return false, nil
 	}
 	return false, err
+}
+
+type Page struct {
+	Title string
+	Body  []byte
+}
+
+func (page *Page) save() (err error) {
+	return ioutil.WriteFile(page.Title, page.Body, 0666)
+}
+
+func (page *Page) load(title string) (err error) {
+	page.Title = title
+	page.Body, err = ioutil.ReadFile(page.Title)
+	return err
 }
 
 func main() {
@@ -67,4 +84,18 @@ func main() {
 
 	// fmt.Println("read done")
 
+	/*
+		请给这个结构编写一个 save 方法，将 Title 作为文件名、Body作为文件内容，写入到文本文件中。
+		再编写一个 load 函数，接收的参数是字符串 title，该函数读取出与 title 对应的文本文件。
+		请使用 *Page 做为参数，因为这个结构可能相当巨大，
+	*/
+	page := Page{
+		"Page.md",
+		[]byte("# Page\n## Section1\nThis is section1."),
+	}
+
+	page.save()
+	var new_page Page
+	new_page.load("Page.md")
+	fmt.Println(string(new_page.Body))
 }

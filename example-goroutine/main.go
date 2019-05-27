@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 	"sync"
 	"time"
 )
@@ -18,13 +17,6 @@ func cal(ch chan int, a int, b int) {
 	c := a + b
 	fmt.Printf("%d + %d = %d\n", a, b, c)
 	ch <- 1
-}
-
-func test() {
-	for i := 0; i < 10; i++ {
-		fmt.Println("test() hello world" + strconv.Itoa(i))
-		time.Sleep(time.Second)
-	}
 }
 
 func WriteData(intChan chan int) {
@@ -47,12 +39,26 @@ func ReadData(intChan chan int, exitChan chan bool) {
 	close(exitChan)
 }
 func main() {
-	// go test()
+	data := make(chan int)
+	exit := make(chan bool)
 
-	// for i := 0; i < 10; i++ {
-	// 	fmt.Println("main() hello world" + strconv.Itoa(i))
-	// 	time.Sleep(time.Second)
-	// }
+	go func() {
+		for d := range data {
+			fmt.Println(d)
+		}
+		fmt.Println("reci over.")
+		exit <- true
+	}()
+
+	data <- 1
+	data <- 2
+	data <- 3
+	close(data)
+	fmt.Println("send over.")
+	for <-exit {
+		return
+	}
+
 	var mychan chan int
 	mychan = make(chan int, 3)
 	fmt.Printf("mychan的值是%v，mychan本身的地址%p\n", mychan, &mychan)
