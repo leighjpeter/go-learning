@@ -74,13 +74,43 @@ func BubbleSort2() {
 
 }
 
+// 选择排序
+func SelectSort(arr []int) {
+	len2 := len(arr)
+	for j := 0; j < len2-1; j++ {
+		max := arr[j]
+		maxIndex := j
+		for i := j + 1; i < len2; i++ {
+			if max <= arr[i] {
+				max = arr[i]
+				maxIndex = i
+			}
+		}
+		if maxIndex != j {
+			arr[j], arr[maxIndex] = arr[maxIndex], arr[j]
+		}
+	}
+}
+
+// 插入排序
+func InsertSort(a []int) {
+	n := len(a)
+	for i := 1; i < n; i++ { //如果第i个元素小于第j个，则第j个向后移动
+		v := a[i]
+		j := i - 1
+		for ; j >= 0 && v < a[j]; j-- {
+			a[j+1] = a[j]
+		}
+		a[j+1] = v
+	}
+}
+
 // 快速排序
-func quickSort(arr []int, leftIndex, rightIndex int) {
+func QuickSort(arr []int, leftIndex, rightIndex int) {
 	if leftIndex > rightIndex {
 		return
 	}
-	i := leftIndex
-	j := rightIndex
+	i, j := leftIndex, rightIndex
 	base := arr[i]
 
 	for i != j {
@@ -101,12 +131,12 @@ func quickSort(arr []int, leftIndex, rightIndex int) {
 		}
 	}
 	arr[i] = base
-	quickSort(arr, leftIndex, i-1)
-	quickSort(arr, i+1, rightIndex)
+	QuickSort(arr, leftIndex, i-1)
+	QuickSort(arr, i+1, rightIndex)
 }
 
 // 快排方式2
-func quickSort2(arr []int, leftIndex, rightIndex int) {
+func QuickSort2(arr []int, leftIndex, rightIndex int) {
 	i, j := leftIndex, rightIndex
 	base := arr[i]
 	for i < j {
@@ -126,8 +156,8 @@ func quickSort2(arr []int, leftIndex, rightIndex int) {
 	}
 
 	arr[i] = base
-	quickSort(arr, leftIndex, i-1)
-	quickSort(arr, i+1, rightIndex)
+	QuickSort(arr, leftIndex, i-1)
+	QuickSort(arr, i+1, rightIndex)
 }
 
 // 有序数组的二分查找
@@ -144,6 +174,19 @@ func BinaryFind(arr *[6]int, leftIndex, rightIndex, findVal int) {
 		BinaryFind(arr, middle+1, rightIndex, findVal)
 	} else {
 		fmt.Println("find!")
+	}
+}
+
+func hannuota(n int, A, B, C string) {
+	if n < 1 || n > 20 {
+		return
+	}
+	if n == 1 {
+		fmt.Printf("盘子%d从%s柱子移动到%s柱子\n", n, A, C)
+	} else {
+		hannuota(n-1, A, C, B)
+		fmt.Printf("盘子%d从%s柱子移动到%s柱子\n", n, A, C)
+		hannuota(n-1, B, A, C)
 	}
 }
 
@@ -193,6 +236,18 @@ func Round(f float64, n int) float64 {
 }
 
 func main() {
+	// 排序
+	var sli = []int{6, 1, 2, 4, 9, 3, 7, 5, 10, 8, 0}
+	// len2 := len(sli)
+	// QuickSort2(sli, 0, len2-1)
+	// fmt.Println(sli)
+
+	// SelectSort(sli)
+	// InsertSort(sli)
+	fmt.Println(sli)
+	// 汉诺塔
+	hannuota(3, "A", "B", "C")
+	return
 	f := Round(0.3452135, 2)
 	fmt.Println(f)
 	v := [...]int{1, 2, 3, 4, 5}
@@ -220,17 +275,11 @@ func main() {
 		}
 	}
 	fmt.Println(n) // [1 2 100 4 5 ]
-	return
+	// return
 
 	map_a := make(map[string]int)
 	mmmm, ok := map_a["aaa"]
 	fmt.Println(mmmm, ok)
-
-	// 排序
-	var arr = []int{6, 1, 2, 4, 9, 3, 7, 5, 10, 8, 0}
-	len2 := len(arr)
-	quickSort2(arr, 0, len2-1)
-	fmt.Println(arr)
 
 	// 打印金字塔
 	// var n int
