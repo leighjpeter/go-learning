@@ -6,21 +6,44 @@ import (
 	"math/rand"
 	"sort"
 	// "strconv"
+	"bufio"
 	"github.com/gomodule/redigo/redis"
 	"math"
+	"net"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 )
 
-var pool *redis.Pool
+var Pool *redis.Pool
 
 func init() {
-	pool = &redis.Pool{
+	redisHost := ":6379"
+	Pool = newPool(redisHost)
+	close()
+}
+
+func newPool(serve string) *redis.Pool {
+	return &redis.Pool{
 		MaxIdle:   8, //最大空闲链接数
 		MaxActive: 0, // 表示和数据库的最大链接数， 0 表示没有限制 IdleTimeout: 100, // 最大空闲时间
 		Dial: func() (redis.Conn, error) { // 初始化链接的代码， 链接哪个 ip 的 redis
-			return redis.Dial("tcp", "127.0.0.1:6379")
+			return redis.Dial("tcp", serve)
 		},
 	}
+}
+
+func close() {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	signal.Notify(c, syscall.SIGTERM)
+	signal.Notify(c, syscall.SIGKILL)
+	go func() {
+		<-c
+		Pool.Close()
+		os.Exit(0)
+	}()
 }
 
 // 金字塔
@@ -236,6 +259,17 @@ func Round(f float64, n int) float64 {
 }
 
 func main() {
+	sender := bufio.NewScanner(os.Stdin)
+	for sender.Scan() {
+		addr := net.ParseIP(sender.Text())
+		if addr == nil {
+			fmt.Println("Invalid address")
+			os.Exit(0)
+		} else {
+			fmt.Println("The address is ", addr.String())
+		}
+	}
+
 	// 排序
 	var sli = []int{6, 1, 2, 4, 9, 3, 7, 5, 10, 8, 0}
 	// len2 := len(sli)

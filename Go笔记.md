@@ -516,8 +516,73 @@ make 会被编译器翻译成具体的创建函数，由其分配内存和初始
 #### 时间
 
 - now := time.Now()
+
 - 格式化时间函数Fomat  now.Format() !备注：2006-01-02 15:04:05 数字必须固定
+
 - 获取当前时间戳 now.Unix(), now.UnixNano()
+
+- time.LoadLocation(name string)
+
+  ```
+  en["time_zone"]="America/Chicago"
+  cn["time_zone"]="Asia/Shanghai"
+  
+  loc,_:=time.LoadLocation(msg(lang,"time_zone"))
+  t:=time.Now()
+  t = t.In(loc)
+  fmt.Println(t.Format(time.RFC3339))
+  
+  en["date_format"]="%Y-%m-%d %H:%M:%S"
+  cn["date_format"]="%Y年%m月%d日 %H时%M分%S秒"
+  
+  fmt.Println(date(msg(lang,"date_format"),t))
+  
+  func date(fomate string,t time.Time) string{
+  	year, month, day = t.Date()
+  	hour, min, sec = t.Clock()
+  	//解析相应的%Y %m %d %H %M %S然后返回信息
+  	//%Y 替换成2012
+  	//%m 替换成10
+  	//%d 替换成24
+  }
+  ```
+
+
+
+
+#### 本地化资源
+
+```
+package main
+
+import "fmt"
+
+var locales map[string]map[string]string
+
+func main() {
+	locales = make(map[string]map[string]string, 2)
+	en := make(map[string]string, 10)
+	en["pea"] = "pea"
+	en["bean"] = "bean"
+	locales["en"] = en
+	cn := make(map[string]string, 10)
+	cn["pea"] = "豌豆"
+	cn["bean"] = "毛豆"
+	locales["zh-CN"] = cn
+	lang := "zh-CN"
+	fmt.Println(msg(lang, "pea"))
+	fmt.Println(msg(lang, "bean"))
+}
+
+func msg(locale, key string) string {
+	if v, ok := locales[locale]; ok {
+		if v2, ok := v[key]; ok {
+			return v2
+		}
+	}
+	return ""
+}
+```
 
 
 
@@ -1591,6 +1656,19 @@ go func() {
         log.Printf("=== received SIGQUIT ===\n*** goroutine dump...\n%s\n*** end\n", buf[:stacklen])
     }
 }()
+
+
+//函数“实现”接口
+type Tester interface{
+    Do()
+}
+type FuncDo struct{}
+func (self FuncDo) Do(){self()}
+
+var t Tester = FuncDo(func() {
+	println("Hello, World!")
+})
+t.Do()
 ```
 
 
