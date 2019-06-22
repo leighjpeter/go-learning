@@ -12,6 +12,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 )
@@ -21,7 +22,7 @@ var Pool *redis.Pool
 func init() {
 	redisHost := ":6379"
 	Pool = newPool(redisHost)
-	close()
+	closePool()
 }
 
 func newPool(serve string) *redis.Pool {
@@ -34,7 +35,7 @@ func newPool(serve string) *redis.Pool {
 	}
 }
 
-func close() {
+func closePool() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 	signal.Notify(c, syscall.SIGTERM)
@@ -81,8 +82,8 @@ func BubbleSort(arr *[5]int) {
 	}
 }
 
+// 冒泡排序
 func BubbleSort2() {
-	//================冒泡=======================//
 	unsort_a := [...]int{9, 6, 3, 8, 5}
 	l := len(unsort_a)
 	fmt.Println(unsort_a)
@@ -99,11 +100,11 @@ func BubbleSort2() {
 
 // 选择排序
 func SelectSort(arr []int) {
-	len2 := len(arr)
-	for j := 0; j < len2-1; j++ {
+	n := len(arr)
+	for j := 0; j < n-1; j++ {
 		max := arr[j]
 		maxIndex := j
-		for i := j + 1; i < len2; i++ {
+		for i := j + 1; i < n; i++ {
 			if max <= arr[i] {
 				max = arr[i]
 				maxIndex = i
@@ -118,10 +119,10 @@ func SelectSort(arr []int) {
 // 插入排序
 func InsertSort(a []int) {
 	n := len(a)
-	for i := 1; i < n; i++ { //如果第i个元素小于第j个，则第j个向后移动
+	for i := 1; i < n; i++ { //如果第i个元素大于第j个，则第j个向后移动
 		v := a[i]
 		j := i - 1
-		for ; j >= 0 && v < a[j]; j-- {
+		for ; j >= 0 && v > a[j]; j-- {
 			a[j+1] = a[j]
 		}
 		a[j+1] = v
@@ -258,7 +259,97 @@ func Round(f float64, n int) float64 {
 	return math.Trunc((f+0.5/pow10_n)*pow10_n) / pow10_n
 }
 
+type People struct{}
+
+func (p *People) ShowA() {
+	fmt.Println("showA")
+	p.ShowB()
+}
+func (p *People) ShowB() {
+	fmt.Println("showB")
+}
+
+type Teacher struct {
+	People
+}
+
+func (t *Teacher) ShowB() {
+	fmt.Println("teachershowB")
+}
+
+func calc(index string, a, b int) int {
+	ret := a + b
+	fmt.Println(index, a, b, ret)
+	return ret
+}
+
+type threadSafeSet struct {
+	sync.RWMutex
+	s []interface{}
+}
+
+func (set *threadSafeSet) lter() <-chan interface{} {
+	ch := make(chan interface{}, len(set.s))
+	// ch := make(chan interface{})
+	go func() {
+		set.RLock()
+		for elem, value := range set.s {
+			ch <- elem
+			fmt.Println("Iter:", elem, value)
+		}
+		close(ch)
+		set.RUnlock()
+	}()
+	return ch
+}
+
+func test(x int) (func(), func()) {
+	return func() {
+			println(x)
+			x += 10
+		},
+		func() {
+			println(x)
+		}
+}
 func main() {
+	var sli = []int{6, 1, 2, 4, 9, 3, 7, 5, 10, 8, 0}
+	// len2 := len(sli)
+	// QuickSort2(sli, 0, len2-1)
+	// fmt.Println(sli)
+
+	// SelectSort(sli)
+	InsertSort(sli)
+	fmt.Println(sli)
+	return
+	var slice []int
+	slice = make([]int, 0)
+	println(slice == nil)
+	return
+	a1, b1 := test(100)
+	a1()
+	b1()
+	return
+	th := threadSafeSet{
+		s: []interface{}{"1", "2"},
+	}
+	vvv := <-th.lter()
+
+	fmt.Sprintf("%s%v", "ch", vvv)
+
+	return
+	a := 1
+	b := 2
+	defer calc("1", a, calc("10", a, b))
+	a = 0
+	defer calc("2", a, calc("20", a, b))
+	b = 1
+	return
+
+	t := Teacher{}
+	t.ShowA()
+	t.ShowB()
+	return
 	sender := bufio.NewScanner(os.Stdin)
 	for sender.Scan() {
 		addr := net.ParseIP(sender.Text())
@@ -271,14 +362,14 @@ func main() {
 	}
 
 	// 排序
-	var sli = []int{6, 1, 2, 4, 9, 3, 7, 5, 10, 8, 0}
+	// var sli = []int{6, 1, 2, 4, 9, 3, 7, 5, 10, 8, 0}
 	// len2 := len(sli)
 	// QuickSort2(sli, 0, len2-1)
 	// fmt.Println(sli)
 
 	// SelectSort(sli)
 	// InsertSort(sli)
-	fmt.Println(sli)
+	// fmt.Println(sli)
 	// 汉诺塔
 	hannuota(3, "A", "B", "C")
 	return
@@ -292,14 +383,14 @@ func main() {
 		}
 	}
 	fmt.Println(v) // [1 2 100 4 5]
-	a := [...]int{1, 2, 3, 4, 5}
-	for i, v := range a {
-		a[2] = 100
-		if i == 2 {
-			fmt.Println(i, v) // 2, 3
-		}
-	}
-	fmt.Println(a) // [1 2 100 4 5 ]
+	// a := [...]int{1, 2, 3, 4, 5}
+	// for i, v := range a {
+	// 	a[2] = 100
+	// 	if i == 2 {
+	// 		fmt.Println(i, v) // 2, 3
+	// 	}
+	// }
+	// fmt.Println(a) // [1 2 100 4 5 ]
 
 	n := [...]int{1, 2, 3, 4, 5}
 	for i, v := range &n {

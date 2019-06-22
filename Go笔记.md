@@ -244,6 +244,24 @@
   // 方式3
   slice_b := []int{1,2,3}
   var slice_c []string = []string{"tom","leighj"}
+  //
+  var slice []int //创建一个空的slice，cap和len都是0
+  slice == nil //true
+  slice = []int{}
+  slice == nil // false
+  
+  //
+  //slice 之间无法比较 不能使用==
+  
+  //组成多维数据结构，内部的slice长度可以不一致，这一点和数组不同
+  twoD := make([][]int, 3)
+  for i := 0; i < 3; i++ {
+      innerLen := i + 1
+      twoD[i] = make([]int, innerLen)
+      for j := 0; j < innerLen; j++ {
+          twoD[i][j] = i + j
+      }
+  }
   ```
 
 + slice定义完还不能使用，需要引用到一个数组或make一个空间
@@ -276,7 +294,7 @@
   	}
   	return min
   }
-  // 切片重现分片，只能向后移，不能向前移
+  // 切片重新分片，只能向后移，不能向前移
   s1 = slice[1:3] // s1=[9,3]
   s2 = s1[0:4] // s2=[9,3,5,1]
   ```
@@ -1312,11 +1330,10 @@ func main() {
 
 + 异步方式是通过判断缓冲区来决定是否阻塞。如果缓冲区已满，发送被阻塞。缓冲区为空，接受被阻塞
 
-+ 
+
 
   ```go
   //有缓存和无缓存的差别
-  
   chan_c := make(chan int)
   go func() {
   	fmt.Println("GOGOGO!!!")
@@ -1349,6 +1366,8 @@ func main() {
   ```
 
 + 使用 select 可以解决从管道取数据的阻塞问题
+
++ 一个非空的通道也是可以关闭的， 但是通道中剩下的值仍然可以被接收到。
 
 + select处理一个或多个channel的发送和接收
 
@@ -1413,8 +1432,6 @@ func main() {
 
 + 同时有多个可用的channel时按随机顺序处理
 
-+ 可设置超时，可阻塞main
-
 + 在goroutine中使用recover，解决协程中出现的panic，导程序奔溃
 
   ```
@@ -1437,6 +1454,39 @@ func main() {
   }
   ```
 
+
+
+#### 定时器和打点器
+
++ 定时器表示在未来某一时刻的独立事件。你告诉定时器需要等待的时间，然后它将提供一个用于通知的通道。
+
++ 如果仅仅是单纯的等待，你需要使用 `time.Sleep`。 定时器有用原因之一就是你可以在定时器失效之前，取消这个定时器。
+
+  ```go
+  timer2 := time.NewTimer(time.Second)
+  go func() {
+  <-timer2.C
+  fmt.Println("Timer 2 expired")
+  }()
+  stop2 := timer2.Stop()
+  if stop2 {
+  fmt.Println("Timer 2 stopped")
+  }
+  ```
+
++ 打点器：想要在固定的时间间隔重复执行。打点器可以和定时器一样被停止
+
+  ```go
+  ticker := time.NewTicker(time.Millisecond * 500)
+  go func() {
+  for t := range ticker.C {
+  fmt.Println("Tick at", t)
+  }
+  }()
+  time.Sleep(time.Millisecond * 1600)
+  ticker.Stop()
+  fmt.Println("Ticker stopped")
+  ```
 
 
 #### 反射Reflection
@@ -1659,16 +1709,26 @@ go func() {
 
 
 //函数“实现”接口
-type Tester interface{
-    Do()
+type Tester interface {
+	Do()
 }
-type FuncDo struct{}
-func (self FuncDo) Do(){self()}
+
+type FuncDo func()
+
+func (self FuncDo) Do() {
+	self()
+}
 
 var t Tester = FuncDo(func() {
 	println("Hello, World!")
 })
 t.Do()
+
+// type只能使用在interface
+//panic-recover 对重复解锁互斥锁引发的panic却是无用的
+
+
+
 ```
 
 

@@ -88,10 +88,12 @@ func Disconnect(usb interface{}) {
 func getSum(n1, n2 int) int {
 	return n1 + n2
 }
+
 func myfun(funvar func(int, int) int, num1 int, num2 int) int {
 	return funvar(num1, num2)
 }
 
+// 变参函数
 func sum(args ...int) int {
 	sum := 0
 	for i := 0; i < len(args); i++ {
@@ -107,14 +109,6 @@ func swap(n1, n2 *int) {
 	*n2 = t
 }
 
-func reflectTest01(b interface{}) {
-	rVal := reflect.ValueOf(b)
-	fmt.Println(rVal)
-
-	nu := rVal.Interface().(int)
-	fmt.Println(nu)
-}
-
 func MakeAddSuffix(suffix string) func(string) string {
 	return func(name string) string {
 		if !strings.HasSuffix(name, suffix) {
@@ -125,6 +119,10 @@ func MakeAddSuffix(suffix string) func(string) string {
 }
 
 func main() {
+	ss := []int{5, 6, 7, 8, 9}
+	copy(ss[2:], ss[3:])
+	fmt.Println(ss)
+	return
 	//===============String======================
 	addBmp := MakeAddSuffix(".bmp")
 	s := addBmp("file")
@@ -279,7 +277,7 @@ func main() {
 		fmt.Println(st_a.Name)
 	*/
 
-	//================Interface=======================//
+	//================Interface==================//
 	/*
 		interface_a := PhoneConnecter{"HUAWEI"}
 		interface_a.Connect()
@@ -292,19 +290,23 @@ func main() {
 	*/
 
 	//================JSON=======================//
-	// 序列化
-	JsonStruct()
-	JsonMap()
-	JsonSlice()
-	// 反序列化
-	UnMarshalStruct()
-	UnMarshalMap()
-	UnMarshalSlice()
+	/*
+		// 序列化
+		JsonStruct()
+		JsonMap()
+		JsonSlice()
+		// 反序列化
+		UnMarshalStruct()
+		UnMarshalMap()
+		UnMarshalSlice()
+	*/
 
-	//===============Reflect==================//
-	//1. 先定义一个 int //
-	var num int = 100
-	reflectTest01(num)
+	//================Reflect==================//
+	/*
+		//1. 先定义一个 int //
+		var num int = 100
+		reflectTest01(num)
+	*/
 
 }
 
@@ -391,4 +393,12 @@ func UnMarshalSlice() {
 		fmt.Printf("反序列化错误 err=%v\n", err)
 	}
 	fmt.Printf("slice反序列化后=%v\n", slice_a)
+}
+
+func reflectTest01(b interface{}) {
+	rVal := reflect.ValueOf(b)
+	fmt.Println(rVal)
+
+	nu := rVal.Interface().(int)
+	fmt.Println(nu)
 }
