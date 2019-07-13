@@ -40,6 +40,30 @@
 | interface | | nil | 接口 |
 | function | | nil | 函数 |
 
++ 关键字
+
+  ```go
+  break      default       func     interface   select
+  case       defer         go       map         struct
+  chan       else          goto     package     switch
+  const      fallthrough   if       range       type
+  continue   for           import   return      var
+  ```
+
++ 内部预定义字段
+
+  ```go
+  内建常量: true false iota nil
+  
+  内建类型: int int8 int16 int32 int64
+            uint uint8 uint16 uint32 uint64 uintptr
+            float32 float64 complex128 complex64
+            bool byte rune string error
+  
+  内建函数: make len cap new append copy close delete
+            complex real imag
+            panic recover
+  ```
 
 
 + 声明变量
@@ -250,7 +274,7 @@
   slice = []int{}
   slice == nil // false
   
-  //
+  
   //slice 之间无法比较 不能使用==
   
   //组成多维数据结构，内部的slice长度可以不一致，这一点和数组不同
