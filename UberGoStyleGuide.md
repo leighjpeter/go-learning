@@ -240,7 +240,7 @@ Slices 和 Maps 包含指向底层数据的指针，所以在复制它们时需�
 请记住，如果您存储了对Map或Slice的引用，则可以对其进行修改。
 
 <table>
-<thead><tr><th>Bad</th> <th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th> <th>优秀👍</th></tr></thead>
 <tbody>
 <tr>
 <td>
@@ -284,7 +284,7 @@ trips[0] = ...
 同样的，需要小心修改结构体内部的map或者slice
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -339,7 +339,7 @@ snapshot := stats.Snapshot()
 使用defer清理资源比如文件和锁
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -387,7 +387,7 @@ Defer的开销非常小，只有在能保证方法执行时间是纳秒级的情
 Channel的大小通常应为1或者无缓冲。默认情况下，channel是无缓冲的，大小为0。任何其他大小都必须经过审查，考虑大小是如何确定的，如何防止channel在负载下填充并阻塞写入的原因，以及会引起什么问题
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -414,7 +414,7 @@ c := make(chan int)
 在Go中引入枚举的标准方法是声明一个自定义类型和带有iota的const组。 由于变量的默认值为0，因此通常应该以非零值开始枚举。
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -490,7 +490,7 @@ const (
 如果客户端需要检测错误，并且您已经创建了一个简单的错误，使用[`errors.new`]，并为错误使用一个变量
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -543,7 +543,7 @@ if err := foo.Open(); err != nil {
 
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -643,7 +643,7 @@ if err := foo.Open("foo"); err != nil {
 将上下文添加到返回的错误时，请避免使用“failed to”这样的短语，以保持上下文的简洁性，这些短语表示明显的错误并随着错误在堆栈中的渗透而堆积：
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -697,7 +697,7 @@ type. Therefore, always use the "comma ok" idiom.
   [type assertion]: https://golang.org/ref/spec#Type_assertions
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -727,7 +727,7 @@ fine. -->
   [cascading failures]: https://en.wikipedia.org/wiki/Cascading_failure
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -782,7 +782,7 @@ var _statusTemplate = template.Must(template.New("name").Parse("_statusHTML"))
 即使在测试中，也要优先选择t.Fatal或t.FailNow来代替恐慌，以确保测试标记为失败。
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -822,7 +822,7 @@ if err != nil {
   [sync/atomic]: https://golang.org/pkg/sync/atomic/
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -877,7 +877,7 @@ Performance-specific guidelines apply only to the hot path.
 `fmt`.
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -916,7 +916,7 @@ BenchmarkStrconv-4    64.2 ns/op    1 allocs/op
 不要重复从固定字符串创建byte slice。相反，请执行一次转换并捕获结果。
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -958,7 +958,7 @@ BenchmarkGood-4  500000000   3.25 ns/op
 Go支持对相似的声明进行分组
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -982,7 +982,7 @@ import (
 同样适用于常量，变量，类型声明。
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -1027,7 +1027,7 @@ type (
 仅与组相关的声明。不要对不相关的声明进行分组。
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -1062,7 +1062,7 @@ const ENV_VAR = "MY_ENV"
 组不限于可以使用的地方。例如，可以在函数内部使用它们。
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -1103,7 +1103,7 @@ func f() string {
 goimports的默认分组
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -1174,7 +1174,7 @@ import (
 
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -1220,7 +1220,7 @@ rest of the methods on the receiver.
 由于功能是按receiver分组的，因此普通实用程序功能应在文件末尾出现。
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -1266,7 +1266,7 @@ func calcCost(n int[]) int {...}
 代码应通过尽可能先处理错误情况/特殊情况并尽早返回或继续循环来减少嵌套。减少嵌套多个级别的代码量。
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -1310,7 +1310,7 @@ for _, v := range data {
 如果在if的两个分支中都设置了变量，则可以将其替换为单个if
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -1342,7 +1342,7 @@ if b {
 顶层，使用标准的`var`关键字。请勿指定类型，除非它与表达式的类型不同。
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -1390,7 +1390,7 @@ they are used that they are global symbols.
 基本原则：顶级变量和常量具有包范围。使用通用名称可以轻松地在其他文件中使用错误的值。
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -1433,7 +1433,7 @@ const (
 嵌入式类型（例如互斥体）应位于结构的字段列表的顶部，并且必须有一个空行将嵌入式字段与常规字段分隔开
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -1464,7 +1464,7 @@ type Client struct {
   [`go vet`]: https://golang.org/cmd/vet/
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -1503,7 +1503,7 @@ tests := []struct{
 如果将变量显式设置为某个值，则应使用短变量声明(`:=`)
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -1525,7 +1525,7 @@ s := "foo"
   [Declaring Empty Slices]: https://github.com/golang/go/wiki/CodeReviewComments#declaring-empty-slices
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -1563,7 +1563,7 @@ func f(list []int) {
 - 您不应该明确返回长度为零的切片. 而应该返回 `nil` 替代.
 
   <table>
-  <thead><tr><th>Bad</th><th>Good</th></tr></thead>
+  <thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
   <tbody>
   <tr><td>
 
@@ -1587,7 +1587,7 @@ func f(list []int) {
 - 检查slice是否为空, 通常使用 `len(s) == 0`. 不检查  `nil`.
 
   <table>
-  <thead><tr><th>Bad</th><th>Good</th></tr></thead>
+  <thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
   <tbody>
   <tr><td>
 
@@ -1611,7 +1611,7 @@ func f(list []int) {
 - 零值（用var 声明的slice）可以直接用，无需 `make()`.
 
   <table>
-  <thead><tr><th>Bad</th><th>Good</th></tr></thead>
+  <thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
   <tbody>
   <tr><td>
 
@@ -1650,7 +1650,7 @@ func f(list []int) {
 尽可能减少变量的范围。如果与 [Reduce Nesting](#reduce-nesting) 范围冲突，请勿缩小范围.
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -1676,7 +1676,7 @@ if err := ioutil.WriteFile(name, data, 0644); err != nil {
 如果需要if之外的函数调用结果，那么不应尝试缩小范围
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -1719,7 +1719,7 @@ return nil
 函数调用中的裸参数可能会损害可读性。当参数名称的含义不明显时，添加 C-style 注释(`/* ... */`)作为参数名称。
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -1770,7 +1770,7 @@ func printInfo(name string, region Region, status Status)
 Go 支持 [raw string literals](https://golang.org/ref/spec#raw_string_lit)，可以跨越多行并包含引号。使用这些字符串可以避免更难阅读的手工转义的字符串
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -1792,7 +1792,7 @@ wantError := `unknown error:"test"`
 初始化结构体时，使用 `&T{}` 代替 `new(T)` ，以使其与结构初始化一致
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -1822,7 +1822,7 @@ sptr := &T{Name: "bar"}
 这有助于`go vet`对格式字符串进行静态分析
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -1868,7 +1868,7 @@ $ go vet -printfuncs=wrapf,statusf
   [subtests]: https://blog.golang.org/subtests
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
@@ -1967,7 +1967,7 @@ Functional options 是一种模式，你可以声明一个不透明的`Option`�
 将此模式用于你需要扩展的构造函数或者其他公共APIs的可选参数，尤其是这些函数已经有3个甚至更多参数的情况下
 
 <table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
+<thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
 <tbody>
 <tr><td>
 
