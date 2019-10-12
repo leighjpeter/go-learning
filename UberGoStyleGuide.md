@@ -1,6 +1,6 @@
 # Uber Go 代码风格指南
 
-[英文原版]: https://github.com/uber-go/guide/blob/master/style.md
+[英文原版](https://github.com/uber-go/guide/blob/master/style.md)
 
 ## 目录
 
