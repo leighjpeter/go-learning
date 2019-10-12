@@ -1,4 +1,4 @@
-package car
+package demo
 
 import "errors"
 

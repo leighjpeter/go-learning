@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/leighjpeter/go-learning/example-goroutine/gsema"
 	"sync"
 	"time"
 )
@@ -38,6 +39,7 @@ func ReadData(intChan chan int, exitChan chan bool) {
 	exitChan <- true
 	close(exitChan)
 }
+
 func main() {
 	data := make(chan int)
 	exit := make(chan bool)
@@ -57,33 +59,6 @@ func main() {
 	fmt.Println("send over.")
 	for <-exit {
 		return
-	}
-
-	var mychan chan int
-	mychan = make(chan int, 3)
-	fmt.Printf("mychan的值是%v，mychan本身的地址%p\n", mychan, &mychan)
-	// write data
-	// 写入数据不能超过cap
-	mychan <- 10
-	num := 12
-	mychan <- num
-	fmt.Printf("mychan的长度是%v，mychan的容量是%v\n", len(mychan), cap(mychan))
-	// get data
-	// 读取数据不能无限读
-	var num_get1 int
-	num_get1 = <-mychan
-	fmt.Println(num_get1)
-	fmt.Printf("mychan的长度是%v，mychan的容量是%v\n", len(mychan), cap(mychan))
-
-	// 循环channel 必须要close()
-	c := make(chan bool)
-	go func() {
-		fmt.Println("GOGOGO")
-		c <- true
-		close(c)
-	}()
-	for v := range c {
-		fmt.Println(v)
 	}
 
 	var once sync.Once
@@ -153,4 +128,71 @@ func main() {
 		}()
 		<-chan_b
 	*/
+}
+
+// 控制 goroutine的并发数量
+var wg = sync.WaitGroup{}
+
+func main2() {
+	userCount := 5
+	ch := make(chan bool, 3)
+	for i := 0; i < userCount; i++ {
+		wg.Add(1)
+		go Read(ch, i)
+	}
+	wg.Wait()
+}
+
+func Read(ch chan bool, i int) {
+	defer wg.Done()
+	ch <- true
+	fmt.Printf("go func: %d, time: %d\n", i, time.Now().Unix())
+	time.Sleep(time.Second)
+	<-ch
+}
+
+// 控制goroutine2个并发
+var sema = gsema.NewSemaphore(2)
+
+func main3() {
+	userCount := 5
+	for i := 0; i < userCount; i++ {
+		go ReadSema(i)
+	}
+	sema.Wait()
+	time.Sleep(2 * time.Second)
+}
+
+func ReadSema(i int) {
+	defer sema.Done()
+	sema.Add(1)
+	fmt.Printf("go func: %d, time: %d\n", i, time.Now().Unix())
+	time.Sleep(time.Second)
+}
+
+// 变更channel的输入数量
+// 变更channel的循环值
+// 变更最大允许并发的goroutine数量
+func main4() {
+	userCount := 10
+	ch := make(chan int, 5)
+	for i := 0; i < userCount; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for d := range ch {
+				fmt.Printf("go func: %d, time: %d\n", d, time.Now().Unix())
+				time.Sleep(time.Second * time.Duration(d))
+			}
+		}()
+	}
+
+	for i := 0; i < 10; i++ {
+		ch <- 1
+		ch <- 2
+		//time.Sleep(time.Second)
+	}
+
+	close(ch)
+	wg.Wait()
 }

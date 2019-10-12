@@ -1,12 +1,69 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"sync"
 	"time"
 )
 
 func main() {
-	//速率限制
+	// 通道并发安全。词法安全
+	// 在chanOwner的词法范围内实例化通道，使得通道的写入操作范围被限制在它定义的闭包中。
+	chanOwner := func() <-chan int {
+		results := make(chan int, 5)
+		go func() {
+			defer close(results)
+			for i := 0; i < 5; i++ {
+				results <- i
+			}
+		}()
+		return results
+	}
+	// 将通道的用法限制为只读
+	constomer := func(results <-chan int) {
+		for v := range results {
+			fmt.Printf("Received:%d\n", v)
+		}
+		fmt.Println("Done reciving!")
+	}
+
+	printData := func(wg *sync.WaitGroup, data []byte) {
+		defer wg.Done()
+		var buff bytes.Buffer
+		for _, b := range data {
+			fmt.Fprintf(&buff, "%c", b)
+		}
+		fmt.Println(buff.String())
+	}
+	var wg sync.WaitGroup
+	wg.Add(2)
+	data := []byte("golang")
+	go printData(&wg, data[:3])
+	go printData(&wg, data[3:])
+	wg.Wait()
+	return
+	results := chanOwner()
+	constomer(results)
+
+	return
+
+	// 超时控制
+	ch := make(chan string)
+
+	go func() {
+		time.Sleep(time.Second * 2)
+		ch <- "result"
+	}()
+
+	select {
+	case res := <-ch:
+		fmt.Println(res)
+	case <-time.After(time.Second * 3):
+		fmt.Println("time out")
+	}
+
+	// 速率限制
 	requests := make(chan int, 5)
 	for i := 0; i < 5; i++ {
 		requests <- i
@@ -18,7 +75,7 @@ func main() {
 		fmt.Println("request", req, time.Now())
 	}
 
-	//定时器和打点器
+	// 定时器和打点器
 	timer1 := time.NewTimer(time.Second * 2)
 	<-timer1.C
 	fmt.Println("Timer 1 expired")

@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -31,24 +33,45 @@ type LoginForm struct {
 	Password string `form:"password" binding:"required" `
 }
 
-type LoginJson struct {
+type Login struct {
 	User     string `json:"user" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
 
 type Person struct {
-	Name     string    `form:"name"`
+	ID       string    `uri:"id"`
+	Name     string    `form:"name" uri:"name"`
 	Address  string    `form:"address"`
 	Birthday time.Time `form:"birthday" time_format:"2006-01-02" time_utc:"1"`
 }
 
 func main() {
+	gin.DisableConsoleColor()
+	f, _ := os.Create("gin.log")
+	gin.DefaultWriter = io.MultiWriter(f)
+
 	router := gin.Default()
+
+	router.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
+		// your custom format
+		return fmt.Sprintf("%s - [%s] \"%s %s %s %d %s \"%s\" %s\"\n",
+			param.ClientIP,
+			param.TimeStamp.Format(time.RFC1123),
+			param.Method,
+			param.Path,
+			param.Request.Proto,
+			param.StatusCode,
+			param.Latency,
+			param.Request.UserAgent(),
+			param.ErrorMessage,
+		)
+	}))
 
 	router.SetFuncMap(template.FuncMap{
 		"FormatAsDate": FormatAsDate,
 	})
 	router.LoadHTMLGlob("templates/**/*")
+
 	router.GET("/posts/:action", func(c *gin.Context) {
 		action := c.Param("action")
 		if action == "index" {
@@ -56,10 +79,11 @@ func main() {
 				"title": "Posts",
 			})
 		} else {
-			c.String(http.StatusOK, "Action= %s", action)
+			c.String(http.StatusOK, "Action = %s", action)
 		}
 
 	})
+
 	router.GET("/users/:name/:action", func(c *gin.Context) {
 		// firstname:=c.DefaultQuery("firstname","Guest")
 		// lastname := c.Query("lastname") 是c.Request.URL.Query().GET("lastname") 的简写
@@ -67,6 +91,15 @@ func main() {
 		action := c.Param("action")
 		message := name + " is " + action
 		c.String(http.StatusOK, message)
+	})
+
+	router.GET("/hello/:name/:id", func(c *gin.Context) {
+		var person Person
+		if err := c.ShouldBindUri(&person); err != nil {
+			c.JSON(400, gin.H{"msg": err})
+			return
+		}
+		c.JSON(200, gin.H{"name": person.Name, "uuid": person.ID})
 	})
 
 	router.GET("/raw", func(c *gin.Context) {
@@ -83,21 +116,22 @@ func main() {
 		// nick := c.DefaultPostForm("nick", "anonymous") // 此方法可以设置默认值
 		if err := c.ShouldBind(&form); err == nil {
 			if form.User == "user" && form.Password == "password" {
-				c.JSON(200, gin.H{"status": "you are logged in"})
+				c.JSON(http.StatusOK, gin.H{"status": "you are logged in"})
 			} else {
-				c.JSON(401, gin.H{"status": "unauthorized"})
+				c.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized"})
 			}
 		}
 	})
 
+	//eg. curl -v -X POST http://localhost:9090/loginJSON -H 'content-type: application/json' -d '{"user":"user","password":"pwd"}'
 	router.POST("loginJSON", func(c *gin.Context) {
-		var login_json LoginJson
-		if err := c.ShouldBindJSON(&login_json); err != nil {
+		var login Login
+		if err := c.ShouldBindJSON(&login); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
-		if login_json.User != "user" || login_json.Password != "pwd" {
+		if login.User != "user" || login.Password != "pwd" {
 			c.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized"})
 			return
 		}
@@ -105,12 +139,10 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"status": "you are logged in"})
 	})
 
-	router.GET("startPage", startPage)
-
 	//使用 SecureJSON 防止 json 劫持。如果给定的结构是数组值，则默认预置 "while(1)," 到响应体。
 	// 你也可以使用自己的 SecureJSON 前缀
 	// router.SecureJsonPrefix(")]}',\n")
-	router.GET("/someJSON", func(c *gin.Context) {
+	router.GET("/secureJSON", func(c *gin.Context) {
 		names := []string{"lena", "austin", "foo"}
 
 		// 将输出：while(1);["lena","austin","foo"]
@@ -125,6 +157,7 @@ func main() {
 		// 将输出：x({\"foo\":\"bar\"})
 		c.JSONP(http.StatusOK, data)
 	})
+
 	// 文件上传
 	router.POST("/upload", func(c *gin.Context) {
 		// 单文件
@@ -148,9 +181,10 @@ func main() {
 	})
 
 	//Redirect
-	router.GET("/test", func(c *gin.Context) {
-		c.Redirect(http.StatusMovedPermanently, "http://www.google.com/")
+	router.GET("/redirect", func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "http://www.baidu.com/")
 	})
+
 	//路由重定向
 	router.GET("/test", func(c *gin.Context) {
 		c.Request.URL.Path = "/test2"
@@ -164,6 +198,8 @@ func main() {
 	router.Static("/assets", "./assets")
 	router.StaticFS("/more_static", http.Dir("my_file_system"))
 	router.StaticFile("/favicon.ico", "./resources/favicon.ico")
+
+	router.GET("startPage", startPage)
 
 	router.Run(":9090")
 }

@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+
+	"sync"
 	// "sort"
 	"encoding/json"
 	"reflect"
@@ -117,8 +119,104 @@ func MakeAddSuffix(suffix string) func(string) string {
 		return name
 	}
 }
+func f7() (r int) {
+	defer func(r int) {
+		r = r + 5
+	}(r)
+	return 1
+}
 
+func closure(x int) func(int) int {
+	return func(y int) int {
+		return x + y
+	}
+}
 func main() {
+
+	var activityConfig = map[string]float64{
+		"0|10":  50,
+		"10|50": 75,
+		"50|+":  100,
+	}
+
+	for k, v := range activityConfig {
+		println(k, v)
+	}
+	return
+
+	type Student struct {
+		Name string
+		Age  int
+	}
+	var st3 = Student{"leighj", 30}
+	fmt.Println(st3)
+	var st1 = Student{Name: "leighj", Age: 30}
+	fmt.Println(st1)
+	// 返回结构体的指针类型
+	var st2 = &Student{Name: "leighj", Age: 30}
+	fmt.Println(*st2)
+
+	var closure [2]func()
+
+	for i := 0; i < 2; i++ {
+		closure[i] = func() {
+			println(i)
+		}
+	}
+	closure[0]() // 2
+	closure[1]() // 2
+
+	for i := 0; i < 2; i++ {
+		val := i
+		closure[i] = func() {
+			println(val)
+		}
+	}
+	closure[0]() // 0
+	closure[1]() // 1
+
+	type Foo struct {
+		bar string
+	}
+	list := []Foo{
+		{"A"},
+		{"B"},
+		{"C"},
+	}
+	list2 := make([]*Foo, len(list))
+	for i, value := range list {
+		list2[i] = &value
+	}
+	fmt.Println(list[0], list[1], list[2])    // {A} {B} {C}
+	fmt.Println(list2[0], list2[1], list2[2]) // &{C} &{C} &{C}
+
+	var once sync.Once
+	onceBody := func() {
+		fmt.Println("Only once")
+	}
+	done := make(chan bool)
+	for i := 0; i < 10; i++ {
+		go func() {
+			once.Do(onceBody)
+			done <- true
+		}()
+	}
+	for i := 0; i < 10; i++ {
+		<-done
+	}
+	return
+	// Go 语言为数不多的陷阱
+	arr := []int{1, 2, 3, 4, 5}
+	fmt.Println(len(arr), cap(arr)) // 5 5
+	slice := arr[1:2]
+	fmt.Println(slice, len(slice), cap(slice)) // [2] 1 4
+	slice = append(slice, 6, 7, 8)
+	fmt.Println(slice)                  // [2,6,7,8]
+	fmt.Println(len(slice), cap(slice)) // 4,4
+	fmt.Println(arr)                    // [1,2,6,7,8]
+	// 信条: 不对函数slice类型的参数append
+
+	return
 	ss := []int{5, 6, 7, 8, 9}
 	copy(ss[2:], ss[3:])
 	fmt.Println(ss)

@@ -1,4 +1,4 @@
-package monster
+package demo
 
 import (
 	"testing"
