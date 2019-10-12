@@ -2054,7 +2054,7 @@ db.Connect(
 </td></tr>
 </tbody></table>
 
-See also,
+参考，
 
 - [Self-referential functions and the design of options]
 - [Functional options for friendly APIs]
@@ -2064,17 +2064,3 @@ See also,
 
 <!-- TODO: replace this with parameter structs and functional options, when to
 use one vs other -->
-
-
-
-
-
-
-
-
-
-## 性能
-
-## 风格
-
-## 格式布局
