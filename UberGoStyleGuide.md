@@ -47,6 +47,7 @@
   - [Functional Options](#functional-options)
 
 ## 介绍
+
 Style是控制代码的约定。术语`样式`有点用词不当，因为这些约定不仅仅涵盖源文件.formatting-gofmt为我们处理这个问题。
 
 本指南的目标是通过详细描述在uber编写go代码的注意事项。这些规则是为了代码的基本可管理，同时仍允许工程师富有成效地使用go语言特性。
@@ -72,18 +73,18 @@ https://github.com/golang/go/wiki/IDEsAndTextEditorPlugins
 
 ### Pointers to Interfaces
 
-你几乎不需要一个指向接口的指针。应该将接口作为值传递——其底层数据还是一个指针。
+你几乎不需要一个指向接口类型的指针。应该将接口作为值传递——实质上其底层数据还是一个指针。
 
-接口是两个字段：
+接口在底层有两个字段表示：
 
 1. 指向某些特定类型信息的指针，可以将其视为“类型”
 2. 数据指针：如果存储的数据是指针，则直接存储。如果存储的数据是一个值，则存储指向该值的指针。
 
-如果要接口方法修改基础数据，必须使用指针。
+如果要接口方法修改底层数据，必须使用指针（译注：这里有点简略，TODO疑问）。
 
 ### Receivers and Interfaces
 
-可以对值和指针调用具有值类型接收器的方法
+使用值接收器的方法既可以通过值调用，也可以通过指针调用。
 
 举例：
 
@@ -171,7 +172,7 @@ mu.Lock()
 </tbody></table>
 
 
-如果通过指针使用结构体，那么mutex可以不是指针字段，或者最好是直接嵌入到结构体中
+如果使用结构体指针，那么mutex可以以非指针形式作为结构体的组成字段，或者最好是直接嵌入到结构体中
 
 <table>
 <tbody>
@@ -380,11 +381,11 @@ return p.count
 
 
 Defer的开销非常小，只有在能保证方法执行时间是纳秒级的情况下可以不使用。
-与使用defer的可读性相比，其开销忽略不计，尤其适用于具有比简单的内存访问更多更大的方法，其中其他计算比defer更大
+使用defer提升可读性是值得的，因为使用defer的成本微不足道，尤其适用于那些不仅仅是简单内存访问的较大的方法，在这些方法中其他计算的开销远超defer。
 
 ### Channel Size is One or None
 
-Channel的大小通常应为1或者无缓冲。默认情况下，channel是无缓冲的，大小为0。任何其他大小都必须经过审查，考虑大小是如何确定的，如何防止channel在负载下填充并阻塞写入的原因，以及会引起什么问题
+Channel的大小通常应为1或者无缓冲。默认情况下，channel是无缓冲的，大小为0。任何其他大小都必须经过审查，考虑大小是如何确定的，如何防止channel在负载下被填充满并阻塞写入，以发生这种情况时会引起什么问题
 
 <table>
 <thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
@@ -592,7 +593,7 @@ func use() {
 </td></tr>
 </tbody></table>
 
-请小心直接暴露自定义错误类型，因为它们已成为包的公共api。最好是提供匹配函数来检查错误。
+请小心直接暴露自定义错误类型，因为它们已成为包的公共api。最好是提供公开匹配函数来检查错误。
 
 ```go
 // package foo
@@ -690,11 +691,10 @@ x: y: new store: the error
 
 ### Handle Type Assertion Failures
 
-The single return value form of a [type assertion] will panic on an incorrect
-type. Therefore, always use the "comma ok" idiom.
-类型断言的单值返回将会对不正确的类型引发panic，因此使用“comma ok”形式是必要的。
 
-  [type assertion]: https://golang.org/ref/spec#Type_assertions
+[类型断言]的单值返回将会对不正确的类型引发panic，因此使用“comma ok”形式是必要的。
+
+  [类型断言]: https://golang.org/ref/spec#Type_assertions
 
 <table>
 <thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
@@ -773,7 +773,7 @@ func main() {
 </td></tr>
 </tbody></table>
 
-Panic/recover 不是错误处理策略。仅当发生不可恢复的事情（例如取消nil引用），程序才必须panic。例外情况是程序初始化：程序启动时出现的错误，应中止程序可能导致恐慌。
+Panic/recover 不是错误处理策略。仅当发生不可恢复的事情（例如取消nil引用），程序才必须panic。例外情况是程序初始化：程序启动时使程序中止的情况可能导致panic。
 
 ```go
 var _statusTemplate = template.Must(template.New("name").Parse("_statusHTML"))
@@ -869,12 +869,11 @@ func (f *foo) isRunning() bool {
 
 ## Performance
 
-Performance-specific guidelines apply only to the hot path.
+性能方面的特定准则，适用于热路径。
 
 ### Prefer strconv over fmt
 
-当原始类型和string互转时 `strconv` is faster than
-`fmt`.
+当原始类型和string互转时 `strconv` 比`fmt`快得多.
 
 <table>
 <thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
@@ -1100,7 +1099,7 @@ func f() string {
 - 标准库
 - 其他
 
-goimports的默认分组
+默认情况下，这是goimports的默认分组
 
 <table>
 <thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
@@ -1133,11 +1132,11 @@ import (
 
 ### Package Names
 
-包命名, 选择名字参考如下:
+包名, 选择名字参考如下:
 
 - 小写。不要大写和下划线
 - 绝大多数时候不需要去重命名导入的包
-- 简短精炼。在每个call site，名称必须是完整标识的
+- 简短精炼。在每个使用的地方都完整标识了该名称。
 - 不要复数形式。如 `net/url`, 而不是 `net/urls`.
 - 不要"common", "util", "shared", or "lib"。这些是差劲的，无用的名称。
 
@@ -1148,9 +1147,7 @@ import (
 
 ### Function Names
 
-We follow the Go community's convention of using [MixedCaps for function
-names]. An exception is made for test functions, which may contain underscores
-for the purpose of grouping related test cases, 
+
 我们遵循Go社区关于使用[MixedCaps for function names]的约定。测试功能有一个例外，为了对相关的测试用例进行分组，可能包含下划线e.g.,
 `TestMyFunction_WhatIsBeingTested`.
 
@@ -1208,16 +1205,9 @@ import (
 - 函数应粗略的按调用顺序排序。 
 - 文件中的函数应按接收者分组。
 
-Therefore, exported functions should appear first in a file, after
-`struct`, `const`, `var` definitions.
 因此，可见函数应该出现在文件前部，在`struct`, `const`, `var`定义之后。
 
-A `newXYZ()`/`NewXYZ()` may appear after the type is defined, but before the
-rest of the methods on the receiver.
-
-`newXYZ()`/`NewXYZ()` 应该出现在类型定义之后，但是要在receiver的其余方法之前。
-
-由于功能是按receiver分组的，因此普通实用程序功能应在文件末尾出现。
+`newXYZ()`/`NewXYZ()` 应该出现在类型定义之后，但是要在receiver的其余方法之前。由于功能是按receiver分组的，因此普通实用程序功能应在文件末尾出现。
 
 <table>
 <thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
@@ -1338,7 +1328,6 @@ if b {
 ### Top-level Variable Declarations
 
 
-
 顶层，使用标准的`var`关键字。请勿指定类型，除非它与表达式的类型不同。
 
 <table>
@@ -1380,14 +1369,12 @@ var _e error = F()
 
 ### Prefix Unexported Globals with _
 
-Prefix unexported top-level `var`s and `const`s with `_` to make it clear when
-they are used that they are global symbols.
 
-在私有的顶级var和const之前加_前缀，以便在使用它们时清楚地表明它们是全局符号。
+在私有的顶级`var`和`const`之前加_前缀，以便在使用它们时清楚地表明它们是全局符号。
 
 例外：私有的err value，应以`err`为前缀
 
-基本原则：顶级变量和常量具有包范围。使用通用名称可以轻松地在其他文件中使用错误的值。
+基本依据：顶级变量和常量具有包范围作用域。使用通用名称可能很容易在其他文件中意外使用错误的值。
 
 <table>
 <thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
@@ -1430,7 +1417,7 @@ const (
 
 ### Embedding in Structs
 
-嵌入式类型（例如互斥体）应位于结构的字段列表的顶部，并且必须有一个空行将嵌入式字段与常规字段分隔开
+嵌入式类型（例如mutex）应位于结构的字段列表的顶部，并且必须有一个空行将嵌入式字段与常规字段分隔开
 
 <table>
 <thead><tr><th>差劲👎</th><th>优秀👍</th></tr></thead>
@@ -1740,11 +1727,8 @@ printInfo("foo", true /* isLocal */, true /* done */)
 </td></tr>
 </tbody></table>
 
-Better yet, replace naked `bool` types with custom types for more readable and
-type-safe code. This allows more than just two states (true/false) for that
-parameter in the future.
 
-更好的是，将裸布尔类型替换为自定义类型，以获取更具可读性和类型安全的代码。将来，该参数不仅允许两个状态（true/false）。
+更好的是，将裸`bool`类型替换为自定义类型，以获取更具可读性和类型安全的代码。将来，该参数不仅允许两个状态（true/false）。
 
 ```go
 type Region int

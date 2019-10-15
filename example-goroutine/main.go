@@ -41,25 +41,25 @@ func ReadData(intChan chan int, exitChan chan bool) {
 }
 
 func main() {
-	data := make(chan int)
-	exit := make(chan bool)
+	// data := make(chan int)
+	// exit := make(chan bool)
 
-	go func() {
-		for d := range data {
-			fmt.Println(d)
-		}
-		fmt.Println("reci over.")
-		exit <- true
-	}()
+	// go func() {
+	// 	for d := range data {
+	// 		fmt.Println(d)
+	// 	}
+	// 	fmt.Println("reci over.")
+	// 	exit <- true
+	// }()
 
-	data <- 1
-	data <- 2
-	data <- 3
-	close(data)
-	fmt.Println("send over.")
-	for <-exit {
-		return
-	}
+	// data <- 1
+	// data <- 2
+	// data <- 3
+	// close(data)
+	// fmt.Println("send over.")
+	// for <-exit {
+	// 	return
+	// }
 
 	var once sync.Once
 	onceBody := func() {
@@ -76,6 +76,7 @@ func main() {
 		<-done
 	}
 	return
+
 	var exitChan chan bool
 	var intChan chan int
 
