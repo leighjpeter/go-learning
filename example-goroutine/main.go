@@ -40,7 +40,15 @@ func ReadData(intChan chan int, exitChan chan bool) {
 	close(exitChan)
 }
 
+func add(a, b int) {
+	c := a + b
+	fmt.Printf("%d + %d = %d", a, b, c)
+}
+
 func main() {
+	go add(1, 2)
+	time.Sleep(1e9)
+	return
 	// data := make(chan int)
 	// exit := make(chan bool)
 
@@ -60,22 +68,6 @@ func main() {
 	// for <-exit {
 	// 	return
 	// }
-
-	var once sync.Once
-	onceBody := func() {
-		fmt.Println("Only once")
-	}
-	done := make(chan bool)
-	for i := 0; i < 10; i++ {
-		go func() {
-			once.Do(onceBody)
-			done <- true
-		}()
-	}
-	for i := 0; i < 10; i++ {
-		<-done
-	}
-	return
 
 	var exitChan chan bool
 	var intChan chan int

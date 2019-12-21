@@ -34,76 +34,44 @@ func (func_a *TT) Print(name string) {
 	fmt.Println(func_a.Name)
 }
 
-//================Interface=======================//
-type USB interface {
-	Name() string
+type person struct {
+	nickname string
+	sex      string
+	birthday string
+	weight   string
+	sayHello string
 }
 
-type Connecter interface {
-	Connect()
+type IFile interface {
+	Read(buf []byte) (err error)
+	Write(buf []byte) (n int, err error)
+	Seek(off int64, whence int) (pos int64, err error)
+	Close() error
 }
 
-type PhoneConnecter struct {
-	name string
+type IReader interface {
+	Read(buf []byte) (n int, err error)
 }
 
-func (pc PhoneConnecter) Name() string {
-	return pc.name
+type IWriter interface {
+	Write(buf []byte) (n int, err error)
 }
 
-func (pc PhoneConnecter) Connect() {
-	fmt.Println("Connected:", pc.name)
+type ICloser interface {
+	Close() error
 }
 
-func Disconnect(usb interface{}) {
-	switch v := usb.(type) {
-	case PhoneConnecter:
-		fmt.Println("Disconnected:", v.name)
-	default:
-		fmt.Println("Unknow decive")
-	}
+type File struct {
+	// ...
 }
+
+func (f *File) Read(buf []byte) (n int, err error)                { return }
+func (f *File) Write(buf []byte) (n int, err error)               { return }
+func (f *File) Seek(off int64, whence int) (pos int64, err error) { return }
+func (f *File) Close() error                                      { return nil }
 
 func main() {
-	type Student struct {
-		Name string
-		Age  int
-	}
-	var st3 = Student{"leighj", 30}
-	fmt.Println(st3)
-	var st1 = Student{Name: "leighj", Age: 30}
-	fmt.Println(st1)
-	// 返回结构体的指针类型
-	var st2 = &Student{Name: "leighj", Age: 30}
-	fmt.Println(*st2)
-
-	type Foo struct {
-		bar string
-	}
-	list := []Foo{
-		{"A"},
-		{"B"},
-		{"C"},
-	}
-	list2 := make([]*Foo, len(list))
-	for i, value := range list {
-		list2[i] = &value
-	}
-	fmt.Println(list[0], list[1], list[2])    // {A} {B} {C}
-	fmt.Println(list2[0], list2[1], list2[2]) // &{C} &{C} &{C}
-
 	//================SLICE=======================//
-	/*
-		slice_a := make([]int, 0)
-		fmt.Print(slice_a)
-		a := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
-		fmt.Printf("%p", a)
-		slice_a := a[:]
-		fmt.Println(slice_a)
-		fmt.Printf("%p", slice_a)
-
-
-	*/
 
 	//================MAP=======================//
 	/*
@@ -198,24 +166,11 @@ func main() {
 		fmt.Println(st_a.Name)
 	*/
 
-	//================Interface==================//
-	/*
-		interface_a := PhoneConnecter{"HUAWEI"}
-		interface_a.Connect()
-		Disconnect(interface_a)
-
-		var n float64 = 8.8
-		var nil_a interface{}
-		nil_a = n
-		fmt.Print(nil_a)
-	*/
-
 	//================Reflect==================//
-	/*
-		//1. 先定义一个 int //
-		var num int = 100
-		reflectTest01(num)
-	*/
+
+	//1. 先定义一个 int //
+	var num int = 100
+	reflectTest01(num)
 
 }
 

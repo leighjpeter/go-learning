@@ -6,15 +6,18 @@ import (
 )
 
 func main() {
-
-	序列化
+	UnMarshalStruct2()
+	return
+	// 序列化
 	JsonStruct()
+	return
 	JsonMap()
 	JsonSlice()
 	// 反序列化
 	UnMarshalStruct()
 	UnMarshalMap()
 	UnMarshalSlice()
+
 }
 
 type Monster struct {
@@ -23,10 +26,13 @@ type Monster struct {
 	Birthday string
 	Sal      float64
 	Skill    string
+	Pic      json.RawMessage
 }
 
 func JsonStruct() {
-	monster := Monster{Name: "iphone xr", Age: 10, Birthday: "2019-02-01"}
+	str := `{"name":"ll","age":"11"}`
+	bt := []byte(str)
+	monster := Monster{Name: "iphone xr", Age: 10, Birthday: "2019-02-01", Pic: bt}
 	data, err := json.Marshal(&monster)
 	if err != nil {
 		fmt.Printf("序列号错误 err=%v\n", err)
@@ -76,6 +82,18 @@ func UnMarshalStruct() {
 		fmt.Printf("反序列化错误 err=%v\n", err)
 	}
 	fmt.Printf("struct反序列化后=%v,monster.Name=%v\n", monster, monster.Name)
+}
+
+func UnMarshalStruct2() {
+
+	var monster Monster // monster := Monster{}
+
+	str := "{\"Pic\":{\"name\":\"ll\",\"age\":\"11\"}}"
+	err := json.Unmarshal([]byte(str), &monster)
+	if err != nil {
+		fmt.Printf("反序列化错误 err=%v\n", err)
+	}
+	fmt.Printf("struct反序列化后=%v,monster.Pic=%v\n", monster, string(monster.Pic))
 }
 
 func UnMarshalMap() {
