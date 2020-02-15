@@ -3,3 +3,4 @@
 .project
 .vscode
 /demo-beego/
+go-grpc-example

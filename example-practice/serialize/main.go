@@ -6,15 +6,13 @@ import (
 )
 
 func main() {
-	UnMarshalStruct2()
-	return
 	// 序列化
 	JsonStruct()
-	return
 	JsonMap()
 	JsonSlice()
 	// 反序列化
 	UnMarshalStruct()
+	UnMarshalStruct2()
 	UnMarshalMap()
 	UnMarshalSlice()
 

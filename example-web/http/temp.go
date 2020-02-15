@@ -20,7 +20,7 @@ func main() {
 	http.HandleFunc("/upload", upload)
 	http.HandleFunc("/web_socket", web_socket)
 
-	err := http.ListenAndServe(":9090", nil)
+	err := http.ListenAndServe(":9091", nil)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -32,7 +32,7 @@ func web_socket(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(h, strconv.FormatInt(crutime, 10))
 	// token := fmt.Sprintf("%x", h.Sum(nil))
 	title := "web socket test"
-	t, _ := template.ParseFiles("websocket.gtpl")
+	t, _ := template.ParseFiles("./websocket/websocket.gtpl")
 	t.Execute(w, title)
 }
 

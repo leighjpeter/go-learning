@@ -10,6 +10,9 @@ import (
 	"os"
 )
 
+/**
+上传文件
+*/
 func postFile(filename, targetUrl string) error {
 	bodyBuf := &bytes.Buffer{}
 	bodyWriter := multipart.NewWriter(bodyBuf)
@@ -38,14 +41,15 @@ func postFile(filename, targetUrl string) error {
 
 	resp, err := http.Post(targetUrl, contentType, bodyBuf)
 	defer resp.Body.Close()
-	resp_body, err := ioutil.ReadAll(resp.Body)
+	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
 	fmt.Println(resp.Status)
-	fmt.Println(string(resp_body))
+	fmt.Println(string(respBody))
 	return nil
 }
+
 func main() {
 	targetUrl := "http://localhost:9090/upload"
 	filename := "./a.pdf"

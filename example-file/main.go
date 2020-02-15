@@ -2,11 +2,11 @@ package main
 
 import (
 	"bufio"
-	"bytes"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
+	// "bytes"
 	// "strconv"
 	// "strings"
 )
@@ -41,7 +41,7 @@ func main() {
 	filePath := "/Users/jessica/Dev/go/src/github.com/leighjpeter/go-learning/example-file/"
 	fileName := "aa.txt"
 
-	// 读文件
+	//读文件
 	file, err := os.Open(filePath + fileName)
 	if err != nil {
 		fmt.Println("open fail,err=", err)
@@ -62,6 +62,7 @@ func main() {
 	//os.O_APPEND
 	//os.O_CREATE
 	//os.O_TRUNC
+
 	//写文件
 	file, err = os.OpenFile(filePath+fileName, os.O_TRUNC, 0666)
 	if err != nil {

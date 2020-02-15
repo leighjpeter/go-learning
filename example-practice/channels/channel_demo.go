@@ -21,13 +21,15 @@ func main() {
 		return results
 	}
 	// 将通道的用法限制为只读
-	constomer := func(results <-chan int) {
+	consumer := func(results <-chan int) {
 		for v := range results {
 			fmt.Printf("Received:%d\n", v)
 		}
 		fmt.Println("Done reciving!")
 	}
-
+	results := chanOwner()
+	consumer(results)
+	return
 	printData := func(wg *sync.WaitGroup, data []byte) {
 		defer wg.Done()
 		var buff bytes.Buffer
@@ -43,25 +45,6 @@ func main() {
 	go printData(&wg, data[3:])
 	wg.Wait()
 	return
-	results := chanOwner()
-	constomer(results)
-
-	return
-
-	// 超时控制
-	ch := make(chan string)
-
-	go func() {
-		time.Sleep(time.Second * 2)
-		ch <- "result"
-	}()
-
-	select {
-	case res := <-ch:
-		fmt.Println(res)
-	case <-time.After(time.Second * 3):
-		fmt.Println("time out")
-	}
 
 	// 速率限制
 	requests := make(chan int, 5)
@@ -124,33 +107,5 @@ func main() {
 		fmt.Println("sent all jobs")
 		<-done
 	*/
-	//非阻塞通道操作
-	/*
-		messages := make(chan string)
-		signals := make(chan bool)
 
-		select {
-		case msg := <-messages:
-			fmt.Println("received message:", msg)
-		default:
-			fmt.Println("no message received")
-		}
-
-		msg := "hi"
-		select {
-		case messages <- msg:
-			fmt.Println("sent message", msg)
-		default:
-			fmt.Println("no message sent")
-		}
-
-		select {
-		case msg := <-messages:
-			fmt.Println("received message", msg)
-		case sig := <-signals:
-			fmt.Println("received signal", sig)
-		default:
-			fmt.Println("no activity")
-		}
-	*/
 }
