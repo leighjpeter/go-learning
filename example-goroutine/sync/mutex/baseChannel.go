@@ -8,12 +8,12 @@ import (
 	"time"
 )
 
-var counter int = 0
+// var counter int = 0
 
 func add(a, b int, ch chan int) {
 	c := a + b
-	counter++
-	fmt.Printf("%d: %d + %d = %d\n", counter, a, b, c)
+	// counter++
+	fmt.Printf(" %d + %d = %d\n", a, b, c)
 	ch <- 1
 	close(ch)
 }
@@ -30,7 +30,6 @@ func main() {
 	for _, ch := range chs {
 		<-ch
 	}
-	end := time.Now()
-	consume := end.Sub(start).Seconds()
-	fmt.Println("consume:", consume)
+
+	fmt.Printf("consume: %s\n", time.Since(start))
 }

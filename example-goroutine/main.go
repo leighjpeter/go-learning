@@ -2,16 +2,17 @@ package main
 
 import (
 	"fmt"
-	"github.com/leighjpeter/go-learning/example-goroutine/gsema"
 	"sync"
 	"time"
+
+	"github.com/leighjpeter/go-learning/example-goroutine/gsema"
 )
 
 func do(num int, wg *sync.WaitGroup) {
 	fmt.Printf("start job:%d\n", num)
 	time.Sleep(1 * time.Second)
 	fmt.Printf("stop job:%d\n", num)
-	wg.Done()
+	defer wg.Done()
 }
 
 func cal(ch chan int, a int, b int) {
@@ -40,15 +41,18 @@ func ReadData(intChan chan int, exitChan chan bool) {
 	close(exitChan)
 }
 
-func add(a, b int) {
-	c := a + b
-	fmt.Printf("%d + %d = %d", a, b, c)
-}
+func mainn() {
 
-func main() {
-	go add(1, 2)
-	time.Sleep(1e9)
+	// Wait()
+	wg := sync.WaitGroup{}
+	wg.Add(3)
+	for i := 0; i < 3; i++ {
+		go do(i, &wg)
+	}
+	wg.Wait()
+	fmt.Println("DONE")
 	return
+
 	// data := make(chan int)
 	// exit := make(chan bool)
 
@@ -88,15 +92,6 @@ func main() {
 	}
 	<-chan_a
 
-	// Wait()
-	wg := sync.WaitGroup{}
-	wg.Add(3)
-	for i := 0; i < 3; i++ {
-		go do(i, &wg)
-	}
-	wg.Wait()
-	fmt.Println("DONE")
-
 	/*
 		//无缓存是同步阻塞的
 		chan_a := make(chan int)
@@ -130,22 +125,23 @@ func main2() {
 	userCount := 5
 	ch := make(chan bool, 3)
 	for i := 0; i < userCount; i++ {
-		wg.Add(1)
 		go Read(ch, i)
 	}
 	wg.Wait()
+	time.Sleep(time.Second)
 }
 
 func Read(ch chan bool, i int) {
 	defer wg.Done()
+	wg.Add(1)
 	ch <- true
 	fmt.Printf("go func: %d, time: %d\n", i, time.Now().Unix())
 	time.Sleep(time.Second)
 	<-ch
 }
 
-// 控制goroutine2个并发
-var sema = gsema.NewSemaphore(2)
+// 控制goroutine个并发
+var sema = gsema.NewSemaphore(4)
 
 func main3() {
 	userCount := 5
@@ -153,7 +149,6 @@ func main3() {
 		go ReadSema(i)
 	}
 	sema.Wait()
-	time.Sleep(2 * time.Second)
 }
 
 func ReadSema(i int) {

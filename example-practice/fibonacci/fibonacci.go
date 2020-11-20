@@ -5,10 +5,14 @@ import (
 	"time"
 )
 
+const LIM = 45
+
+var fib [LIM]int
+
 func main() {
 	result := 0
 	start := time.Now()
-	for i := 0; i < 41; i++ {
+	for i := 1; i < LIM; i++ {
 		result = fibonacci(i)
 		fmt.Printf("fibonacci(%d) is: %d\n", i, result)
 	}
@@ -22,12 +26,18 @@ func main() {
 	}
 }
 
+// 有缓存的菲波那契数列
 func fibonacci(n int) (res int) {
+	if fib[n] != 0 {
+		res = fib[n]
+		return
+	}
 	if n <= 1 {
 		res = 1
 	} else {
 		res = fibonacci(n-1) + fibonacci(n-2)
 	}
+	fib[n] = res
 	return
 }
 

@@ -1,9 +1,10 @@
 package demo
 
 import (
-	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // func TestNew(t *testing.T) {
@@ -23,7 +24,7 @@ func TestNewWithAssert(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, c)
 
-	assert.Equal(t, "tesla", c.Name)
+	assert.Equal(t, "tesl", c.Name)
 }
 
 type User struct {

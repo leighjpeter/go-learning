@@ -10,7 +10,7 @@ import (
 
 var (
 	N = 5
-	M = 5
+	M = 6
 )
 
 func gen(s string, times int) <-chan string {

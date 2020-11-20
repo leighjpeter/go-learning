@@ -7,11 +7,12 @@ package main
 import (
 	"fmt"
 	"log"
+	// "log"
 )
 
 var (
-	V2N = 2
-	V2M = 3
+	V2N = 3
+	V2M = 5
 )
 
 func echo(threadNum int, wait, sig chan struct{}) {

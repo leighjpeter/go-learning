@@ -18,7 +18,7 @@ func add(a, b int, lock *sync.Mutex) {
 	lock.Lock()
 	counter++
 	fmt.Printf("%d: %d + %d = %d\n", counter, a, b, c)
-	lock.Unlock()
+	defer lock.Unlock()
 }
 
 func main() {
@@ -38,7 +38,5 @@ func main() {
 			break
 		}
 	}
-	end := time.Now()
-	consume := end.Sub(start).Seconds()
-	fmt.Println("consume:", consume)
+	fmt.Printf("consume: %s\n", time.Since(start))
 }

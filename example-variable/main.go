@@ -70,7 +70,25 @@ func (f *File) Write(buf []byte) (n int, err error)               { return }
 func (f *File) Seek(off int64, whence int) (pos int64, err error) { return }
 func (f *File) Close() error                                      { return nil }
 
+const (
+	i = 1 << iota
+	j = 3 << iota
+	k
+	l
+)
+
 func main() {
+	println(k, l)
+	strMap := map[int]string{1: "a", 2: "b", 3: "c"}
+
+	strMap[4] = "d"
+
+	delete(strMap, 0)
+
+	fmt.Printf("%v", strMap)
+}
+
+func main2() {
 	//================SLICE=======================//
 
 	//================MAP=======================//

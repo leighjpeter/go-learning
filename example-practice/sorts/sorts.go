@@ -48,18 +48,23 @@ func SelectSort() {
 // 思路分析：在要排序的一组数中，假设前面的数已经是排好顺序的，现在要把第n个数插到前面的有序数中，使得这n个数也是排好顺序的。如此反复循环，直到全部排好顺序。
 // 时间复杂度O(n^2)
 func InsertSort() {
-	a := []int{5, 2, 5, 7, 4, 8}
+	a := []int{5, 2, 6, 7, 4, 8}
 	fmt.Printf("插入排序前:%v\n", a)
 	cnt := len(a)
 	for i := 1; i < cnt; i++ {
 		tmp := a[i]
-		j := i - 1
-		for ; j >= 0 && tmp < a[j]; j-- {
-			a[j+1] = a[j]
+		j := i
+		for ; j > 0 && tmp < a[j-1]; j-- {
+			// a[j] = a[j-1]
+			swap(a, j, j-1)
 		}
-		a[j+1] = tmp
+		// a[j] = tmp
 	}
 	fmt.Printf("插入排序后:%v\n", a)
+}
+
+func swap(a []int, i, j int) {
+	a[i], a[j] = a[j], a[i]
 }
 
 // 快速排序-不稳定
@@ -205,6 +210,8 @@ var UnSortSlice = []int{6, 1, 2, 4, 9, 3, 7, 5, 10, 8, 0}
 var heapSlice = []int{20, 30, 90, 40, 70, 110, 60, 10, 100, 50, 80}
 
 func main() {
+	InsertSort()
+	return
 	// BubbleSort()
 	// SelectSort()
 	// InsertSort()
@@ -221,55 +228,5 @@ func main() {
 	// heapSliceSort := MergeSort(heapSlice)
 	// fmt.Printf("堆排序后:%v\n", heapSliceSort)
 
-	var val int
-	// println(&val)
-	fmt.Println(&val)
-	f(10000)
-	// println(&val)
-	fmt.Println(&val)
-
-	s := make([]int, 5)
-	s = append(s, 1, 2, 3)
-	fmt.Println(s) // [0,0,0,0,0,1,2,3]
-	ss := make([]int, 0)
-	ss = append(ss, 1, 2, 3, 4)
-	fmt.Println(ss) // [1,2,3,4]
-
-	i := []int{5, 6, 7}
-	hello(i...)
-	fmt.Println(i[0])
-
-	x := []int{100, 200, 300, 400, 500, 600, 700}
-	twohundred := &x[1]
-	x = append(x, 800)
-	for i := range x {
-		x[i]++
-	}
-	fmt.Println(*twohundred)
-
-	intmap := map[int]string{
-		1: "a",
-		2: "bb",
-		3: "ccc",
-	}
-
-	v, err := GetValue(intmap, 3)
-	fmt.Println(v, err)
-}
-
-func f(i int) {
-	if i--; i == 0 {
-		return
-	}
-	f(i)
-}
-func hello(num ...int) {
-	num[0] = 18
-}
-
-func GetValue(m map[int]string, id int) (string, bool) {
-	if _, exist := m[id]; exist {
-		return "存在数据", true
-	}
-	return "", false
+	hannuota(2, "A", "B", "C")
 }

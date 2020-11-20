@@ -6,6 +6,7 @@ import (
 
 /**
 * 题目：无重复的字符的最长子串
+* abcabcbb
  */
 func lengthOfLongestSubstring(str string) int {
 	cnt := 0
@@ -25,4 +26,26 @@ func lengthOfLongestSubstring(str string) int {
 		}
 	}
 	return cnt
+}
+
+// 解2
+func LenMax(str string) int {
+	rs := 0
+	s := make(map[byte]int)
+	for i, j := 0, 0; i < len(str); i++ {
+		if v, ok := s[str[i]]; ok {
+			j = max(v, j)
+		}
+		rs = max(rs, i-j)
+		s[str[i]] = i
+
+	}
+	return rs
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
 }

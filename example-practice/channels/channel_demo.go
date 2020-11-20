@@ -8,15 +8,26 @@ import (
 )
 
 func main() {
+	cc := make(chan int, 1)
+	for i := 0; i < 5; i++ {
+		cc <- i
+	}
+	close(cc)
+	for v := range cc {
+		fmt.Printf("Received:%d\n", v)
+	}
+	// fmt.Println(<-c)
+	return
+
 	// 通道并发安全。词法安全
 	// 在chanOwner的词法范围内实例化通道，使得通道的写入操作范围被限制在它定义的闭包中。
 	chanOwner := func() <-chan int {
 		results := make(chan int, 5)
 		go func() {
-			defer close(results)
 			for i := 0; i < 5; i++ {
 				results <- i
 			}
+			defer close(results)
 		}()
 		return results
 	}
@@ -25,11 +36,12 @@ func main() {
 		for v := range results {
 			fmt.Printf("Received:%d\n", v)
 		}
-		fmt.Println("Done reciving!")
+		fmt.Println("Done receiving!")
 	}
 	results := chanOwner()
 	consumer(results)
 	return
+
 	printData := func(wg *sync.WaitGroup, data []byte) {
 		defer wg.Done()
 		var buff bytes.Buffer
@@ -44,7 +56,7 @@ func main() {
 	go printData(&wg, data[:3])
 	go printData(&wg, data[3:])
 	wg.Wait()
-	return
+	// return
 
 	// 速率限制
 	requests := make(chan int, 5)
@@ -81,31 +93,5 @@ func main() {
 	time.Sleep(time.Millisecond * 1600)
 	ticker.Stop()
 	fmt.Println("Ticker stopped")
-
-	//通道关闭
-	/*
-		jobs := make(chan int, 5)
-		done := make(chan bool)
-		go func() {
-			for {
-				j, ok := <-jobs
-				if ok {
-					fmt.Println("received job:", j)
-				} else {
-					fmt.Println("received all jobs")
-					done <- true
-					return
-				}
-			}
-		}()
-
-		for i := 0; i < 3; i++ {
-			jobs <- i
-			fmt.Println("sent job", i)
-		}
-		close(jobs)
-		fmt.Println("sent all jobs")
-		<-done
-	*/
 
 }

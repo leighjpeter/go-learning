@@ -13,8 +13,8 @@ var counter int = 0
 
 func add(a, b int, wg *sync.WaitGroup) {
 	c := a + b
-	counter++
-	fmt.Printf("%d: %d + %d = %d\n", counter, a, b, c)
+	// counter++
+	fmt.Printf(" %d + %d = %d\n", a, b, c)
 	wg.Done()
 }
 
@@ -25,9 +25,6 @@ func main() {
 	for i := 0; i < 10; i++ {
 		go add(1, i, &wg)
 	}
-
-	end := time.Now()
 	wg.Wait()
-	consume := end.Sub(start).Seconds()
-	fmt.Println("consume:", consume)
+	fmt.Printf("consume: %s\n", time.Since(start))
 }

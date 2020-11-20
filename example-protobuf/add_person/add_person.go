@@ -3,13 +3,14 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/golang/protobuf/proto"
-	pb "github.com/leighjpeter/go-learning/example-protobuf/tutorial"
 	"io"
 	"io/ioutil"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/golang/protobuf/proto"
+	pb "github.com/leighjpeter/go-learning/example-protobuf/tutorial"
 )
 
 func promptForAddress(r io.Reader) (*pb.Person, error) {
@@ -101,7 +102,7 @@ func main() {
 		}
 	}
 
-	// [Start marshal_prote]
+	// [Start marshal_proto]
 	book := &pb.AddressBook{}
 	// [START_EXCLUDE]
 	if err := proto.Unmarshal(in, book); err != nil {

@@ -1,5 +1,9 @@
 package model
 
+import (
+	grpc "google.golang.org/grpc"
+)
+
 type student struct {
 	Name  string
 	score float64
@@ -18,4 +22,20 @@ func (stu *student) GetScore() float64 {
 
 func (stu *student) SetScore(score float64) {
 	stu.score = score
+}
+
+type Service interface {
+	ListPost()
+}
+
+type service struct {
+	conn *grpc.ClientConn
+}
+
+func NewService(conn *grpc.ClientConn) Service {
+	return &service{conn}
+}
+
+func (s *service) ListPost() {
+	s.conn.ListPost()
 }
